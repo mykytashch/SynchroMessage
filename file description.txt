@@ -1,0 +1,33 @@
+**Backend**
+
+1. `package.json`: Этот файл содержит информацию о проекте и список зависимостей, которые необходимы для выполнения приложения.
+2. `server.js`: Этот файл служит точкой входа в ваше приложение. Он настраивает экземпляр Express.js, подключает базу данных и запускает сервер.
+3. `controllers/authController.js` и `controllers/diaryController.js`: Эти файлы управляют логикой вашего приложения. Контроллеры обрабатывают HTTP-запросы, взаимодействуют с моделями для доступа к данным и отправляют ответы клиентам.
+4. `models/User.js` и `models/Entry.js`: Эти файлы описывают структуру данных ваших коллекций в MongoDB.
+5. `routes/authRoutes.js` и `routes/diaryRoutes.js`: Эти файлы определяют маршруты вашего приложения и связывают их с соответствующими контроллерами.
+6. `config/passportConfig.js` и `config/databaseConfig.js`: Эти файлы содержат настройки Passport.js и MongoDB.
+7. `tests/auth.test.js` и `tests/diary.test.js`: Эти файлы содержат тесты для функций аутентификации и CRUD операций.
+8. `utils/backup.js`: Этот файл содержит скрипт для создания ежедневного резервного копирования базы данных в 23:59.
+
+**WebApp**
+
+1. `App.js` и `index.js`: Эти файлы служат точками входа в ваше приложение React. App.js обычно содержит основную логику маршрутизации, а index.js - инициализацию приложения React.
+2. `components/Header.js`, `components/Login.js`, `components/Register.js` и `components/Diary.js`: Эти файлы представляют собой React-компоненты, отвечающие за отображение соответствующих частей приложения.
+3. `services/authService.js` и `services/diaryService.js`: Эти файлы содержат функции для взаимодействия с API на сервере.
+4. `tests/auth.test.js` и `tests/diary.test.js`: Эти файлы содержат тесты для функций аутентификации и CRUD операций.
+
+**iOSApp**
+
+1. `AppDelegate.swift` и `SceneDelegate.swift`: Это стандартные файлы для любого iOS-приложения, они управляют жизненным циклом приложения.
+2. `Models/User.swift` и `Models/Entry.swift`: Эти файлы содержат классы модели, которые представляют структуру данных пользователей и записей в дневнике.
+3. `Views/LoginView.swift`, `Views/RegisterView.swift` и `Views/DiaryView.swift`: Это представления, отвечающие за отображение интерфейса приложения.
+4. `Services/authService.swift` и `Services/diaryService.swift`: Эти файлы содержат функции для взаимодействия с API на сервере.
+5. `Tests/auth.test.swift` и `Tests/diary.test.swift`: Эти файлы содержат тесты для функций аутентификации и CRUD операций.
+
+**AndroidApp**
+
+1. `MainActivity.kt`: Это главное активити приложения, которое отвечает за запуск и навигацию.
+2. `Models/User.kt` и `Models/Entry.kt`: Эти файлы содержат классы модели, которые представляют структуру данных пользователей и записей в дневнике.
+3. `Views/LoginView.kt`, `Views/RegisterView.kt` и `Views/DiaryView.kt`: Это представления, отвечающие за отображение интерфейса приложения.
+4. `Services/authService.kt` и `Services/diaryService.kt`: Эти файлы содержат функции для взаимодействия с API на сервере.
+5. `androidTest/auth.test.kt` и `androidTest/diary.test.kt`: Эти файлы содержат тесты для функций аутентификации и CRUD операций.

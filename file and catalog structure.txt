@@ -1,0 +1,82 @@
+SynchroMessage
+│
+├── backend
+│   ├── package.json
+│   ├── server.js
+│   ├── controllers
+│   │   ├── authController.js
+│   │   ├── diaryController.js
+│   ├── models
+│   │   ├── User.js
+│   │   ├── Entry.js
+│   ├── routes
+│   │   ├── authRoutes.js
+│   │   ├── diaryRoutes.js
+│   ├── config
+│   │   ├── passportConfig.js
+│   │   ├── databaseConfig.js
+│   ├── tests
+│   │   ├── auth.test.js
+│   │   ├── diary.test.js
+│   ├── utils
+│   │   ├── backup.js
+│
+├── webapp
+│   ├── package.json
+│   ├── public
+│   ├── src
+│   │   ├── App.js
+│   │   ├── index.js
+│   │   ├── components
+│   │   │   ├── Header.js
+│   │   │   ├── Login.js
+│   │   │   ├── Register.js
+│   │   │   ├── Diary.js
+│   │   ├── services
+│   │   │   ├── authService.js
+│   │   │   ├── diaryService.js
+│   │   ├── tests
+│   │   │   ├── auth.test.js
+│   │   │   ├── diary.test.js
+│
+├── iOSApp
+│   ├── SynchroMessage.xcodeproj
+│   ├── SynchroMessage
+│   │   ├── AppDelegate.swift
+│   │   ├── SceneDelegate.swift
+│   │   ├── Models
+│   │   │   ├── User.swift
+│   │   │   ├── Entry.swift
+│   │   ├── Views
+│   │   │   ├── LoginView.swift
+│   │   │   ├── RegisterView.swift
+│   │   │   ├── DiaryView.swift
+│   │   ├── Services
+│   │   │   ├── authService.swift
+│   │   │   ├── diaryService.swift
+│   │   ├── Utils
+│   │   │   ├── Constants.swift
+│   │   ├── Tests
+│   │   │   ├── auth.test.swift
+│   │   │   ├── diary.test.swift
+│
+├── AndroidApp
+│   ├── app
+│   │   ├── src
+│   │   │   ├── main
+│   │   │   │   ├── java/com/synchromessage
+│   │   │   │   │   ├── MainActivity.kt
+│   │   │   │   │   ├── Models
+│   │   │   │   │   │   ├── User.kt
+│   │   │   │   │   │   ├── Entry.kt
+│   │   │   │   │   ├── Views
+│   │   │   │   │   │   ├── LoginView.kt
+│   │   │   │   │   │   ├── RegisterView.kt
+│   │   │   │   │   │   ├── DiaryView.kt
+│   │   │   │   │   ├── Services
+│   │   │   │   │   │   ├── authService.kt
+│   │   │   │   │   │   ├── diaryService.kt
+│   │   │   ├── androidTest
+│   │   │   │   ├── java/com/synchromessage
+│   │   │   │   │   ├── auth.test.kt
+│   │   │   │   │   ├── diary.test.kt
