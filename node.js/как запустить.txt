@@ -1,0 +1,11 @@
+
+
+как запустить
+
+на Windows
+
+cd C:\Users\New\Desktop\all projects\node.js
+
+nodemon ./src/app.js
+
+
