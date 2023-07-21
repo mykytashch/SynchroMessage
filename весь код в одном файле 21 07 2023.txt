@@ -1,0 +1,844 @@
+Спасибо, но получили такие ошибки
+
+C:\Users\New\Desktop\all projects\node.js>npm test
+
+> node@1.0.0 test
+> npm run test:mocha && npm run test:jest
+
+
+> node@1.0.0 test:mocha
+> mocha 'tests/**/*.test.js'
+
+App listening at http://localhost:3000
+
+
+  Auth Controller
+    register
+Connected to MongoDB
+      ✔ should register a new user and redirect to login (480ms)
+    login
+      1) should log in an existing user and redirect to chat
+    logout
+      ✔ should log out an existing user and redirect to login
+
+  Chat Controller
+    sendMessage
+      2) should create a message and return status 201
+    editMessage
+      3) should update a message and return the updated message
+
+  ensureAuth Middleware
+    ✔ should call next if authenticated
+    ✔ should redirect if not authenticated
+
+  Message Model
+    ✔ should create a new message
+
+  User Model
+    ✔ should create a new user
+
+  Auth Service
+    ✔ should authenticate a user (132ms)
+    createUser
+      ✔ should create a new user (167ms)
+
+  Chat Service
+    createMessage
+      ✔ should create a new message
+    updateMessage
+      ✔ should update a message
+    getMessages
+      4) should get messages
+
+
+  10 passing (11s)
+  4 failing
+
+  1) Auth Controller
+       login
+         should log in an existing user and redirect to chat:
+     Error: Timeout of 10000ms exceeded. For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves. (C:\Users\New\Desktop\all projects\node.js\tests\controllers\authController.test.js)
+      at listOnTimeout (node:internal/timers:573:17)
+      at process.processTimers (node:internal/timers:514:7)
+
+  2) Chat Controller
+       sendMessage
+         should create a message and return status 201:
+
+      AssertionError: expected { Object (_events, _eventsCount, ...) } to have status code 201 but got 404
+      + expected - actual
+
+      -404
+      +201
+
+      at Context.<anonymous> (tests\controllers\chatController.test.js:27:27)
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+  3) Chat Controller
+       editMessage
+         should update a message and return the updated message:
+     AssertionError: expected {} to have property '_id'
+      at Context.<anonymous> (tests\controllers\chatController.test.js:44:32)
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+  4) Chat Service
+       getMessages
+         should get messages:
+     TypeError: Message.find(...).sort is not a function
+      at exports.getMessages (src\services\chatService.js:39:8)
+      at Context.<anonymous> (tests\services\chatService.test.js:41:40)
+      at process.processImmediate (node:internal/timers:478:21)
+
+
+
+Вот весь наш код абсолютно
+
+.env
+
+PORT=3000
+MONGO_URI=mongodb+srv://tosniki91:N25kbverb@clustervkapture.b6tox4s.mongodb.net/?retryWrites=true&w=majority
+SESSION_SECRET=myverysecretkey
+
+
+
+{
+  "name": "node",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm run test:mocha && npm run test:jest",
+    "test:mocha": "mocha 'tests/**/*.test.js'",
+    "test:jest": "jest",
+    "start": "nodemon ./src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "markdown-it": "^13.0.1",
+    "mongoose": "^7.4.0",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0",
+    "nodemon": "^3.0.1",
+    "sinon": "^15.2.0",
+    "supertest": "^6.3.3"
+  }
+}
+
+/SynchroMessage
+  /node_modules
+  /public
+    /css
+    /js
+    /images
+  /src
+    /config
+      passport-config.js
+    /controllers
+      authController.js
+      chatController.js
+    /models
+      User.js
+      Message.js
+    /routes
+      authRoutes.js
+      chatRoutes.js
+    /services
+      authService.js
+      chatService.js
+    /utils
+      database.js
+    app.js
+  /views
+    /partials
+      header.ejs
+      footer.ejs
+    login.ejs
+    register.ejs
+    chat.ejs
+  .env
+  package.json
+  README.md
+
+// tests/services/chatService.test.js
+
+const chai = require('chai');
+const sinon = require('sinon');
+const chatService = require('../../src/services/chatService');
+const Message = require('../../src/models/Message');
+const { expect } = chai;
+
+describe('Chat Service', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  describe('createMessage', () => {
+    it('should create a new message', async () => {
+      const messageData = { user: '123', text: 'Test message' };
+      const saveStub = sinon.stub(Message.prototype, 'save').resolves();
+
+      await chatService.createMessage(messageData);
+
+      expect(saveStub.calledOnce).to.be.true;
+    });
+  });
+
+  describe('updateMessage', () => {
+    it('should update a message', async () => {
+      const messageData = { text: 'Test message updated' };
+      const findByIdAndUpdateStub = sinon.stub(Message, 'findByIdAndUpdate').resolves();
+
+      await chatService.updateMessage('123', messageData);
+
+      expect(findByIdAndUpdateStub.calledOnce).to.be.true;
+    });
+  });
+
+  describe('getMessages', () => {
+    it('should get messages', async () => {
+      const messages = [{ _id: '123', text: 'Test message' }];
+      const findStub = sinon.stub(Message, 'find').resolves(messages);
+
+      const result = await chatService.getMessages('123');
+
+      expect(result).to.eql(messages);
+      expect(findStub.calledOnce).to.be.true;
+    });
+  });
+});
+
+// tests/services/authService.test.js
+
+const chai = require('chai');
+const sinon = require('sinon');
+const authService = require('../../src/services/authService');
+const User = require('../../src/models/User');
+const bcrypt = require('bcryptjs');
+const { expect } = chai;
+
+describe('Auth Service', () => {  
+  afterEach(() => {  
+    sinon.restore();  
+  });
+
+  describe('createUser', () => {  
+    it('should create a new user', async () => {  
+      const userData = { username: 'testCreateUser', password: 'password' };
+      await authService.createUser(userData);
+      const user = await User.findOne({ username: 'testCreateUser' });
+      expect(user).to.exist;
+    });  
+  }); 
+
+  it('should authenticate a user', async () => {
+    const password = 'testPassword';
+    const hash = await bcrypt.hash(password, 10);
+    const user = new User({ username: 'testAuthenticateUser', password: hash });
+
+    sinon.stub(User, 'findOne').resolves(user);
+
+    const authenticatedUser = await authService.authenticateUser('testAuthenticateUser', password);
+    expect(authenticatedUser).to.exist;
+    expect(authenticatedUser.username).to.equal('testAuthenticateUser');
+  });
+
+});
+
+// tests/models/User.test.js
+
+const chai = require('chai');
+const sinon = require('sinon');
+const User = require('../../src/models/User');
+const { expect } = chai;
+
+describe('User Model', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('should create a new user', async () => {
+    const user = new User({ username: 'test', password: 'password' });
+    const saveStub = sinon.stub(user, 'save').resolves();
+
+    await user.save();
+
+    expect(saveStub.calledOnce).to.be.true;
+  });
+});
+
+// tests/models/Message.test.js
+
+const chai = require('chai');
+const sinon = require('sinon');
+const Message = require('../../src/models/Message');
+const { expect } = chai;
+
+describe('Message Model', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('should create a new message', async () => {
+    const message = new Message({ user: '123', text: 'Test message' });
+    const saveStub = sinon.stub(message, 'save').resolves();
+
+    await message.save();
+
+    expect(saveStub.calledOnce).to.be.true;
+  });
+});
+
+// tests/middleware/ensureAuth.test.js
+
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const sinon = require('sinon');
+const app = require('../../src/app');
+const ensureAuth = require('../../src/middleware/ensureAuth');  // Added missing import
+const { expect } = chai;
+
+chai.use(chaiHttp);
+
+describe('ensureAuth Middleware', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  it('should call next if authenticated', async () => {
+    const req = { isAuthenticated: () => true };
+    const res = {};
+    const next = sinon.spy();
+
+    ensureAuth(req, res, next);
+
+    expect(next.calledOnce).to.be.true;
+  });
+
+  it('should redirect if not authenticated', async () => {
+    const req = { isAuthenticated: () => false };
+    const res = { redirect: sinon.spy() };
+    const next = sinon.spy();
+
+    ensureAuth(req, res, next);
+
+    expect(res.redirect.calledOnce).to.be.true;
+    expect(next.called).to.be.false;
+  });
+});
+
+// tests/controllers/chatController.test.js
+
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const sinon = require('sinon');
+const app = require('../../src/app');
+const chatService = require('../../src/services/chatService');
+const { expect } = chai;
+
+chai.use(chaiHttp);
+
+describe('Chat Controller', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  describe('sendMessage', () => {
+    it('should create a message and return status 201', async () => {
+      const message = { user: '123', text: 'Test message' };
+      const createMessageStub = sinon.stub(chatService, 'createMessage').resolves(message);
+
+      const res = await chai
+        .request(app)
+        .post('/chat/message')
+        .send({ user: '123', text: 'Test message' });
+
+      expect(res).to.have.status(201);
+      expect(res.body).to.have.property('user', message.user);
+      expect(res.body).to.have.property('text', message.text);
+      expect(createMessageStub.calledOnce).to.be.true;
+    });
+  });
+
+  describe('editMessage', () => {
+    it('should update a message and return the updated message', async () => {
+      const message = { _id: '123', text: 'Test message updated' };
+      const updateMessageStub = sinon.stub(chatService, 'updateMessage').resolves(message);
+
+      const res = await chai
+        .request(app)
+        .put('/chat/message/123')
+        .send({ text: 'Test message updated' });
+
+      expect(res.body).to.have.property('_id', message._id);
+      expect(res.body).to.have.property('text', message.text);
+      expect(updateMessageStub.calledOnce).to.be.true;
+    });
+  });
+});
+
+// tests/controllers/authController.test.js
+
+
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const sinon = require('sinon');
+const app = require('C:/Users/New/Desktop/all projects/node.js/src/app'); 
+const authService = require('../../src/services/authService');
+const User = require('../../src/models/User');
+const passport = require('passport');  
+const { expect } = chai;
+const bcrypt = require('bcryptjs');
+
+chai.use(chaiHttp);
+
+describe('Auth Controller', () => {
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  describe('register', function() {
+  this.timeout(4000);
+  it('should register a new user and redirect to login', async function() {
+    try {
+      const res = await chai
+        .request(app)
+        .post('/auth/register')
+        .redirects(0)
+        .send({ username: 'testRegister', password: 'password' });
+
+      expect(res).to.redirectTo('/login');
+      const user = await User.findOne({ username: 'testRegister' });
+      expect(user).to.exist;
+    } catch (err) {
+      console.error(err);
+      throw err; 
+    }
+  });
+});
+
+  describe('login', function() { 
+  this.timeout(10000); 
+
+  let testUser;
+
+  beforeEach(async function() {
+    // Создание тестового пользователя
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('password', salt);
+    testUser = new User({
+      username: 'testLogin',
+      password: hashedPassword,
+    });
+    await testUser.save();
+  });
+
+  afterEach(async function() {
+    // Удаление тестового пользователя
+    if (testUser) {
+      await User.deleteOne({ _id: testUser._id });
+      testUser = null;
+    }
+  });
+
+  it('should log in an existing user and redirect to chat', async function() { 
+    try {
+      const res = await chai.request(app) 
+        .post('/auth/login')
+        .redirects(0)
+        .send({ username: testUser.username, password: 'password' }); // Использование тестового пользователя и пароля
+
+      expect(res).to.redirectTo('/chat');
+    } catch (err) {
+      console.error(err);
+    }
+  });
+});
+
+
+
+  describe('logout', () => {
+    it('should log out an existing user and redirect to login', async () => {
+      const res = await chai
+        .request(app)
+        .get('/auth/logout');
+
+      expect(res).to.redirect;  
+      expect(res.req.path).to.equal('/login');  
+    });
+  });  
+});  
+
+// app.js
+
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+require('./config/passport-config');
+const mongoose = require('mongoose');
+const LocalStrategy = require('passport-local').Strategy;
+const app = express();
+const port = process.env.PORT || 3000;
+const authRoutes = require('./routes/authRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+const User = require('./models/User'); // Здесь подставьте путь к модели User
+
+
+// Настройка паспорта и стратегии passport-local
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'username',
+      passwordField: 'password',
+    },
+    async (username, password, done) => {
+      try {
+        const user = await User.findOne({ username: username });
+        if (!user) {
+          return done(null, false);
+        }
+        // Use bcrypt.compare to check passwords
+        user.comparePassword(password, (err, isMatch) => {
+          if (err) {
+            return done(err);
+          }
+          if (!isMatch) {
+            return done(null, false);
+          }
+          return done(null, user);
+        });
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
+
+
+
+
+// connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('Connected to MongoDB');
+}).catch((err) => {
+  console.error('Failed to connect to MongoDB', err);
+});
+
+app.use(express.json());
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // Set this to true if you are using HTTPS, but for development, you can set it to false.
+}));
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/auth', authRoutes);
+app.use('/chat', chatRoutes);
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+});
+
+app.listen(3000, () => {
+  console.log('App listening at http://localhost:3000');
+});
+
+module.exports = app; // for testing
+
+//chatService.js
+
+const Message = require('../models/Message');
+const markdownIt = require('markdown-it');
+const md = new markdownIt();
+
+exports.createMessage = async (messageData) => {
+  const message = new Message({
+    user: messageData.user,
+    text: md.render(messageData.text),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  return await message.save();
+};
+
+exports.updateMessage = async (id, messageData) => {
+  try {
+    const updatedMessage = await Message.findByIdAndUpdate(
+      id,
+      { 
+        text: md.render(messageData.text),
+        updatedAt: new Date() 
+      },
+      { new: true }
+    );
+    return updatedMessage;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
+exports.getMessages = async (userId, page = 1, limit = 10) => {
+  try {
+    const skip = (page - 1) * limit;
+    const messages = await Message.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    return messages;
+  } catch (err) {
+    throw err;
+  }
+};
+
+//authService.js
+
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+
+exports.createUser = async (userData) => {
+  // Hash the password before storing in database
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
+  const user = new User({
+    username: userData.username,
+    password: hashedPassword,
+  });
+  return await user.save();
+};
+
+exports.authenticateUser = async (username, password) => {
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    throw new Error('Invalid username or password');
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    throw new Error('Invalid username or password');
+  }
+
+  return user;
+};
+
+//chatRoutes.js
+
+const express = require('express');
+const router = express.Router();
+const chatController = require('../controllers/chatController');
+const passport = require('../config/passport-config'); // Import passport configuration
+const ensureAuth = require('../middleware/ensureAuth');
+
+router.post('/message', ensureAuth, chatController.sendMessage);
+router.put('/message/:id', ensureAuth, chatController.editMessage);
+
+module.exports = router;
+
+//authRoutes.js
+
+const express = require('express');
+const passport = require('passport');
+const router = express.Router();
+const authController = require('../controllers/authController');
+
+router.post('/register', authController.register);
+router.post('/login', passport.authenticate('local', {
+  successRedirect: '/chat', // Redirect on successful login
+  failureRedirect: '/login', // Redirect on failed login
+}));
+router.get('/logout', authController.logout);
+
+module.exports = router;
+
+//User.js
+
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const UserSchema = new mongoose.Schema({
+  username: String,
+  password: String
+});
+
+// Функция для хеширования пароля перед сохранением пользователя
+UserSchema.pre('save', async function (next) {
+  const user = this;
+  if (!user.isModified('password')) {
+    return next();
+  }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(user.password, salt);
+    user.password = hashedPassword;
+    next();
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// Функция для сравнения пароля пользователя с хешем, теперь возвращает промис
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model('User', UserSchema);
+
+//Message.js
+
+
+const mongoose = require('mongoose');
+
+const messageSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  text: String,
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: Date
+});
+
+const Message = mongoose.model('Message', messageSchema);
+module.exports = Message;
+
+// middleware/ensureAuth.js
+
+module.exports = function ensureAuth(req, res, next) {
+  if (req.isAuthenticated()) { // метод `isAuthenticated` предоставляется Passport.js
+    return next();
+  }
+  // если пользователь не аутентифицирован, перенаправить его на страницу входа
+  res.redirect('/login');
+};
+
+//chatController.js
+
+const chatService = require('../services/chatService');
+
+exports.sendMessage = async (req, res) => {
+  try {
+    const message = await chatService.createMessage({
+      user: req.user.id,
+      text: req.body.text,
+    });
+    res.status(201).json(message);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+exports.editMessage = async (req, res) => {
+  try {
+    const updatedMessage = await chatService.updateMessage(req.params.id, req.body);
+    res.status(200).json(updatedMessage);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while updating the message' });
+  }
+};
+
+//authController.js
+
+const User = require('../models/User');
+const authService = require('../services/authService');
+const passport = require('passport');
+
+exports.register = async (req, res) => {
+  try {
+    await authService.createUser(req.body);
+    res.redirect('/login');
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+};
+
+exports.login = (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect('/login'); // Redirect to /login when authentication fails
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect('/chat'); // Redirect to /chat when authentication is successful
+    });
+  })(req, res, next);
+};
+
+
+exports.logout = (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+    res.redirect('/login');
+  });
+};
+
+// passport-config.js - здесь вы настроите аутентификацию passport.js, подключив соответствующую стратегию (LocalStrategy, например), и методы serializeUser и deserializeUser.
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'username',
+      passwordField: 'password',
+    },
+    async (username, password, done) => {
+      try {
+        const user = await User.findOne({ username: username });
+        if (!user) {
+          return done(null, false);
+        }
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+          return done(null, false);
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
+
+
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
+
+module.exports = passport;
+
