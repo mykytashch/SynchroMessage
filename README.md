@@ -6,7 +6,7 @@
 [![GitHub Forks](https://img.shields.io/github/forks/mykytashch/SynchroMessage)](https://github.com/mykytashch/SynchroMessage/network)
 
 
-![1](https://github.com/mykytashch/SynchroMessage/assets/129088502/a3deb939-e4c6-4380-94ac-c1ae40d79798)
+![1](https://github.com/mykytashch/SynchroMessage/assets/129088502/d43e592a-9dbd-4580-a0ca-4da1534fe328)
 
 
 SynchroMessage is a powerful tool for maintaining and editing your personal diary in real-time across three different platforms: a web application, an iOS application built with Swift, and an Android application developed with Kotlin. Our application leverages modern technologies like Node.js, Express.js, MongoDB, React.js, Swift, and Kotlin to deliver a unified and seamless user experience. The applications are also built to be robust, secure, and scalable, with comprehensive test suites ensuring reliability and integrity.
